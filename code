@@ -1,0 +1,172 @@
+package solution;
+
+
+import java.io.File;
+import java.io.FileInputStream;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
+import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+public class Submit {
+
+WebDriver driver;
+
+	@Test
+	public void test() throws InterruptedException, IOException {
+		
+		System.setProperty("webdriver.gecko.driver", "/root/Desktop/SuppliedFiles/geckodriver");
+		
+		driver=new FirefoxDriver();
+		
+		driver.manage().timeouts().implicitlyWait(5,TimeUnit.SECONDS);
+		driver.get("http://localhost:8080/application/");
+		driver.manage().window().maximize();
+		
+		driver.findElement(By.xpath("//*[@id=\"mom\"]")).click();
+		
+		WebElement table = driver.findElement(By.id("listMom"));
+	
+		
+		List<WebElement> rows =table.findElements(By.tagName("tr"));
+		String beforeXpath = "//*[@id='listMom']/tbody/tr[";
+		String afterXpath = "]/td[1]";
+		
+		for(int i=2; i<=4; i++) {
+			
+			String actualXpath = beforeXpath+i+afterXpath;
+			WebElement element = driver.findElement(By.xpath(actualXpath));
+			
+			System.out.println(element.getText());
+			if(element.getText().contains("6:30(p.m.)")) 
+			{
+				System.out.println(element.getText());
+			}
+			
+			
+		}
+		
+/*		for(WebElement row : rows) 
+		{
+			
+			List<WebElement> cols = table.findElements(By.tagName("td"));
+			
+			for(WebElement col :cols) 
+			{
+				
+				String a = col.getText();
+				
+				if(a.contains("6:30(p.m.)")) 
+				{
+					System.out.println(row.getText());
+				}
+			}
+			
+		}*/
+		
+		
+		
+		
+		
+		/*WebElement table = driver.findElement(By.id("listMom"));
+		List<WebElement> rows =table.findElements(By.tagName("tr"));
+		
+		for(WebElement row : rows) 
+		{
+			
+			List<WebElement> cols = table.findElements(By.tagName("td"));
+			
+			for(WebElement col :cols) 
+			{
+				
+				String a = col.getText();
+				
+				if(a.contains("6:30(p.m.)")) 
+				{
+					System.out.println(row.getText());
+				}
+			}
+			
+		}*/
+		
+		driver.findElement(By.xpath("//*[@id=\"eventsLink\"]")).click();
+		
+		driver.findElement(By.id("adv")).click();
+		
+		driver.findElement(By.id("book5")).click();
+		Thread.sleep(3000);
+		
+		driver.switchTo().alert().accept();
+		
+		Set<String> windowhandles = driver.getWindowHandles();
+		for(String w : windowhandles) {
+			
+			driver.switchTo().window(w);
+			
+		}
+		 System.out.println("no of opened windows : "+windowhandles.size());
+		 
+		 String filepath = "/root/Desktop/user_repo/To_Participant/AdditionalSuppliedFiles/Book.xls";
+		 
+		 
+		 FileInputStream fis = new FileInputStream(filepath);
+		 HSSFWorkbook wb = new HSSFWorkbook(fis);
+		 HSSFSheet sheet = wb.getSheet("Details");
+		 
+		 int rowcount = sheet.getLastRowNum()-sheet.getFirstRowNum();
+		 
+		 System.out.println("No of rows in Excel : " +rowcount);
+		 
+		 for (int i =1; i<=rowcount; i++) {
+			 
+			Long phone = (long)sheet.getRow(i).getCell(0).getNumericCellValue();
+			String email = sheet.getRow(i).getCell(1).getStringCellValue();
+			Long ticketno = (long)sheet.getRow(i).getCell(2).getNumericCellValue();
+			
+			driver.findElement(By.id("phone")).sendKeys(phone.toString());
+			driver.findElement(By.id("email")).sendKeys(email);
+			driver.findElement(By.id("ticketNo")).sendKeys(ticketno.toString());
+			
+			driver.findElement(By.id("checkValid")).click();
+			Thread.sleep(2000);
+			
+			driver.findElement(By.id("calculateFare")).click();
+			
+			Thread.sleep(2000);
+			
+			String cost = driver.switchTo().alert().getText();
+			driver.switchTo().alert().accept();
+			sheet.getRow(i).createCell(4).setCellValue(cost);
+			FileOutputStream output = new FileOutputStream(filepath);
+			wb.write(output);
+			
+			TakesScreenshot ts = (TakesScreenshot)driver;
+		    File source =	ts.getScreenshotAs(OutputType.FILE);
+		    
+		    FileUtils.copyFile(source,new File("/root/Desktop/user_repo/To_Participant/Image.png"));
+			driver.close();
+		    driver.quit();
+			
+			
+		 }
+		 
+		}
+	
+
+
+}
