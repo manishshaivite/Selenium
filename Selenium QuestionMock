@@ -1,0 +1,43 @@
+
+ASSESSMENT INSTRUCTIONS
+PROJECT INSTRUCTIONS
+PROBLEM STATEMENT
+
+
+IVS-Selenium Basic
+
+Following selectors are allowed in this solution
+
+    id
+    name
+    xpath(no xpath axes)
+    linkText
+
+Use appropriate Setup method to:
+
+    Copy, Paste and use the following statement to set the driver property: 
+    System.setProperty("webdriver.gecko.driver", "/root/Desktop/SuppliedFiles/geckodriver");
+    set an implicit wait of 5 seconds
+    Open the application using url: http://localhost:8080/application/
+    maximize the browser.
+    Click on Mall of Mysore radio button.
+    Store the list of movies in a web element.
+    Iterate through the table of movies and print only the movies that has show time at 6:30 pm in the eclipse console.
+    Click on Events
+    Select the Adventure
+    Click on radio button corresponding to name : Trekking to Kodachadri (the radio button can be directly clicked)
+    Accept the alert box and by using Window handling, navigate to the new tab.
+    By using Excel read , fetch the values from Book.xls excel file and populate the fields.
+
+    Desktop-> user_repo -> To_Participant -> AdditionalSuppliedFiles -> Book.xls
+    Copy below path to use excel file using Selenium script
+    /root/Desktop/user_repo/To_Participant/AdditionalSuppliedFiles/Book.xls.
+    Click on “Check Valid Data” button and “Calculate Cost” button.
+    By using Excel write operation , print the message from the alert box in Book.xls excel file.
+    Take Screenshot of the page and name it as “Image.png” and store it in /root/Desktop/user_repo/To_Participant/
+    By using Window handling , navigate to previous tab.
+    Click on Offers link and select “Mobile App offers” from drop down list.
+    Assert(using Assert class) to check if the message “..., no offers are available for Mobile app !!” is displayed.
+    Use appropriate tear down method to close all the tabs and quit browser.
+
+ 
