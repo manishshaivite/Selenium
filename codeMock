@@ -1,3 +1,4 @@
+
 package solution;
 
 
@@ -23,14 +24,15 @@ import org.openqa.selenium.WebElement;
 
 import org.openqa.selenium.firefox.FirefoxDriver;
 
+import junit.framework.Assert;
+
 public class Submit {
 
 WebDriver driver;
-
 	@Test
 	public void test() throws InterruptedException, IOException {
 		
-		System.setProperty("webdriver.gecko.driver", "/root/Desktop/SuppliedFiles/geckodriver");
+		System.setProperty("webdriver.gecko.driver", "/root/Desktop/SuppliedFiles/geckodriver"); 
 		
 		driver=new FirefoxDriver();
 		
@@ -40,30 +42,47 @@ WebDriver driver;
 		
 		driver.findElement(By.xpath("//*[@id=\"mom\"]")).click();
 		
+		
+		
 		WebElement table = driver.findElement(By.id("listMom"));
 	
-		
-		List<WebElement> rows =table.findElements(By.tagName("tr"));
-		String beforeXpath = "//*[@id='listMom']/tbody/tr[";
+		List<WebElement> cols = table.findElements(By.tagName("tr"));
+					
+			for(WebElement col :cols) 
+			{		
+				String a = col.getText();
+			
+				
+				if(a.contains("6:30(p.m.)")) 
+				{
+					
+					String [] val=a.split(" ");
+					System.out.println(val[0]);
+					
+					
+				}
+			}
+		/*String beforeXpath = "//*[@id='listMom']/tbody/tr[";
 		String afterXpath = "]/td[1]";
 		
-		for(int i=2; i<=4; i++) {
+		for(int i=1; i<=4; i++) {
 			
 			String actualXpath = beforeXpath+i+afterXpath;
+			
 			WebElement element = driver.findElement(By.xpath(actualXpath));
 			
 			System.out.println(element.getText());
+			
 			if(element.getText().contains("6:30(p.m.)")) 
 			{
 				System.out.println(element.getText());
 			}
 			
 			
-		}
+		}*/
 		
-/*		for(WebElement row : rows) 
-		{
-			
+		/*for(WebElement row : rows) 
+		{	
 			List<WebElement> cols = table.findElements(By.tagName("td"));
 			
 			for(WebElement col :cols) 
@@ -77,7 +96,8 @@ WebDriver driver;
 				}
 			}
 			
-		}*/
+		}
+		*/
 		
 		
 		
@@ -112,14 +132,14 @@ WebDriver driver;
 		Thread.sleep(3000);
 		
 		driver.switchTo().alert().accept();
-		
+	    String parent = driver.getWindowHandle();
 		Set<String> windowhandles = driver.getWindowHandles();
 		for(String w : windowhandles) {
 			
 			driver.switchTo().window(w);
 			
 		}
-		 System.out.println("no of opened windows : "+windowhandles.size());
+		 /*System.out.println("no of opened windows : "+windowhandles.size());*/
 		 
 		 String filepath = "/root/Desktop/user_repo/To_Participant/AdditionalSuppliedFiles/Book.xls";
 		 
@@ -130,7 +150,7 @@ WebDriver driver;
 		 
 		 int rowcount = sheet.getLastRowNum()-sheet.getFirstRowNum();
 		 
-		 System.out.println("No of rows in Excel : " +rowcount);
+		/* System.out.println("No of rows in Excel : " +rowcount);*/
 		 
 		 for (int i =1; i<=rowcount; i++) {
 			 
@@ -150,16 +170,27 @@ WebDriver driver;
 			Thread.sleep(2000);
 			
 			String cost = driver.switchTo().alert().getText();
+			
 			driver.switchTo().alert().accept();
+			
 			sheet.getRow(i).createCell(4).setCellValue(cost);
+			
 			FileOutputStream output = new FileOutputStream(filepath);
+			
 			wb.write(output);
 			
 			TakesScreenshot ts = (TakesScreenshot)driver;
 		    File source =	ts.getScreenshotAs(OutputType.FILE);
 		    
 		    FileUtils.copyFile(source,new File("/root/Desktop/user_repo/To_Participant/Image.png"));
-			driver.close();
+		    
+				
+		    driver.switchTo().window(parent);
+		    driver.findElement(By.id("offersLink")).click();
+		   
+			Assert.assertEquals("..., no offers are available for Mobile app !!", "");
+		    
+		    driver.close();
 		    driver.quit();
 			
 			
