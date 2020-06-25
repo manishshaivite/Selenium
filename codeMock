@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-
+import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
@@ -23,8 +23,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.Select;
 
-import junit.framework.Assert;
+
 
 public class Submit {
 
@@ -46,11 +47,11 @@ WebDriver driver;
 		
 		WebElement table = driver.findElement(By.id("listMom"));
 	
-		List<WebElement> cols = table.findElements(By.tagName("tr"));
+		List<WebElement> rows = table.findElements(By.tagName("tr"));
 					
-			for(WebElement col :cols) 
+			for(WebElement row :rows) 
 			{		
-				String a = col.getText();
+				String a = row.getText();
 			
 				
 				if(a.contains("6:30(p.m.)")) 
@@ -102,28 +103,6 @@ WebDriver driver;
 		
 		
 		
-		
-		/*WebElement table = driver.findElement(By.id("listMom"));
-		List<WebElement> rows =table.findElements(By.tagName("tr"));
-		
-		for(WebElement row : rows) 
-		{
-			
-			List<WebElement> cols = table.findElements(By.tagName("td"));
-			
-			for(WebElement col :cols) 
-			{
-				
-				String a = col.getText();
-				
-				if(a.contains("6:30(p.m.)")) 
-				{
-					System.out.println(row.getText());
-				}
-			}
-			
-		}*/
-		
 		driver.findElement(By.xpath("//*[@id=\"eventsLink\"]")).click();
 		
 		driver.findElement(By.id("adv")).click();
@@ -132,7 +111,8 @@ WebDriver driver;
 		Thread.sleep(3000);
 		
 		driver.switchTo().alert().accept();
-	    String parent = driver.getWindowHandle();
+	    
+		String parent = driver.getWindowHandle();
 		Set<String> windowhandles = driver.getWindowHandles();
 		for(String w : windowhandles) {
 			
@@ -187,9 +167,15 @@ WebDriver driver;
 				
 		    driver.switchTo().window(parent);
 		    driver.findElement(By.id("offersLink")).click();
-		   
-			Assert.assertEquals("..., no offers are available for Mobile app !!", "");
 		    
+		    WebElement dropdown = driver.findElement(By.id("offersDropdown"));
+		    Select dd = new Select(dropdown);
+		    dd.selectByValue("Mobile App offers");
+		    Thread.sleep(3000);
+		    
+			Assert.assertEquals("Oops...., no offers are available for Mobile app !!","..., no offers are available for Mobile app !!");
+		    
+			
 		    driver.close();
 		    driver.quit();
 			
@@ -201,3 +187,4 @@ WebDriver driver;
 
 
 }
+
