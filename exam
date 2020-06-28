@@ -1,0 +1,137 @@
+package solution;
+
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.junit.Assert;
+import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.Select;
+
+
+public class Submit {
+
+WebDriver driver=null;
+
+	
+	@Test
+	public void test() throws InterruptedException, IOException {
+		
+		System.setProperty("webdriver.gecko.driver", "/home/user/Desktop/geckodriver");
+		driver = new FirefoxDriver();
+		driver.manage().timeouts().implicitlyWait(12,TimeUnit.SECONDS);
+		
+		driver.get("http://localhost:8080/application/");
+		driver.manage().window().maximize();
+		Thread.sleep(5000);
+		
+		driver.findElement(By.xpath("/html/body/div[2]/div[1]/ul/li/a")).click();
+	    /*String parent = driver.getWindowHandle();*/
+	    Set<String> windowhandles = driver.getWindowHandles();
+	    for(String child: windowhandles) {
+	    	driver.switchTo().window(child);
+	    	System.out.println(driver.getCurrentUrl());	 
+	    }
+	    
+	    
+	   Assert.assertEquals("Bootstrap Example","Bootstrap Example");
+	   
+	   driver.findElement(By.xpath("/html/body/div[3]/div/div[1]/div[2]/div/div[2]/form/div[1]/div/div[2]/div/label[1]/input")).click();
+	   
+	   
+	   WebElement maindish = driver.findElement(By.id("mainDish"));
+	   Select select = new Select(maindish);
+	   
+	   List<WebElement> listMaindish =select.getOptions();
+	   int totaldish = listMaindish.size();
+	   
+	   for(int i=0; i<totaldish; i++) {
+		   
+		   String Dishvalue= listMaindish.get(i).getText();
+		   System.out.println(Dishvalue);
+	   }
+	   
+	  driver.findElement(By.linkText("Take Away")).click();
+	  String filepath = "/home/user/Desktop/user_repo/To_Participant/AdditionalSuppliedFiles/Order.xls.";
+	  FileInputStream fis = new FileInputStream(filepath);
+	  HSSFWorkbook wb = new HSSFWorkbook(fis);
+	  HSSFSheet sheet = wb.getSheet("Data");
+	  int rowCount = sheet.getLastRowNum()-sheet.getFirstRowNum();
+	  for(int i=1;i<=rowCount;i++) {
+		  String type = sheet.getRow(i).getCell(0).getStringCellValue();
+		  String mainDish = sheet.getRow(i).getCell(1).getStringCellValue();
+		  String curry = sheet.getRow(i).getCell(2).getStringCellValue();
+		  Long mobile = (long)sheet.getRow(i).getCell(3).getNumericCellValue();
+		  
+		  driver.findElement(By.className("radio-inline")).sendKeys(type);
+		  driver.findElement(By.id("mainDish")).sendKeys(mainDish);
+		  driver.findElement(By.id("curry")).sendKeys(curry);
+		  driver.findElement(By.id("msg")).sendKeys(mobile.toString());
+		  
+		  driver.findElement(By.xpath("/html/body/div[3]/div/div/div[2]/div/div[2]/form/button")).click();
+		  
+		  
+		  
+		  driver.findElement(By.linkText("Gallery")).click();
+		  TakesScreenshot ts = (TakesScreenshot)driver;
+		  File source = ts.getScreenshotAs(OutputType.FILE);
+		  FileUtils.copyFile(source,newFILE("/home/user/Desktop/user_repo/To_Participant/AdditionalSuppliedFiles/Galley.png"));
+				  
+		driver.close();
+		driver.quit();
+				  
+				  
+				  
+				  
+				  
+				  
+				  
+				  
+				  
+				  
+				  
+				  
+				  
+				  
+		  
+		  
+	  }
+	  
+	  
+	   
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	       
+	    
+		
+	}
+
+
+	private File newFILE(String string) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+
+
+}
